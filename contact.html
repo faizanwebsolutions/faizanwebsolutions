@@ -1096,8 +1096,10 @@ a.dc-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-soft); b
 .cta-btns { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 2rem; }
 </style>
   <style> 
-    @media (max-width: 576px) {
-  button[type="submit"], .mobile-fix-btn {
+   @media (max-width: 576px) {
+  /* Send button aur Back button dono ko barabar karne ke liye */
+  button[type="submit"], .send-btn, 
+  .back-btn, button.back {
     font-size: 11px !important;
     padding: 10px 4px !important;
     white-space: nowrap !important;
@@ -1354,8 +1356,8 @@ a.dc-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-soft); b
                   </div>
                   <p id="msError" class="form-error"></p>
                   <div class="ms-nav">
-                    <button type="button" class="btn btn-ghost" class="mobile-fix-btn" data-ms="back"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                    <button type="submit" class="btn btn-coral" class="mobile-fix-btn" >Send My Request</button>
+                    <button type="button" class="btn btn-ghost" class="send-btn" data-ms="back"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                    <button type="submit" class="btn btn-coral" class="send-btn" >Send My Request</button>
                   </div>
                 </div>
               </form>
