@@ -2467,81 +2467,75 @@ section[id], footer[id] { scroll-margin-top: 5rem; }
     go(0); restart();
   }
 
- /* ---------- audit form (Formspree AJAX) ---------- */
-var form = document.getElementById('auditForm');
-if (form) {
-  var errBox = document.getElementById('formError');
-  var okBox = document.getElementById('formSuccess');
-  var submitBtn = form.querySelector('button[type="submit"]');
-  var btnHTML = submitBtn ? submitBtn.innerHTML : '';
-  
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (errBox) errBox.classList.remove('show');
-    if (okBox) okBox.classList.remove('show');
-
-    var name = document.getElementById('fName').value.trim();
-    var email = document.getElementById('fEmail').value.trim();
-    var website = document.getElementById('fUrl').value.trim();
-    var industry = document.getElementById('fIndustry').value;
-    var service = document.getElementById('fService').value;
-    var msg = document.getElementById('fMsg').value.trim();
-    var problems = [];
-
-    if (name.length < 2) problems.push('your name');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) problems.push('a valid email');
-    if (!service) problems.push('a service');
-    if (msg.length < 10) problems.push('a few more project details (10+ characters)');
-
-    if (problems.length) {
-      if (errBox) {
+/* ---------- audit form (Web3Forms AJAX) ---------- */
+  // TODO: paste your Web3Forms access key below (free at https://web3forms.com) before launch.
+  var WEB3FORMS_KEY = '805d70ec-9c3b-43eb-9e6c-142c72afe6f8';
+  var form = document.getElementById('auditForm');
+  if (form) {
+    var errBox = document.getElementById('formError');
+    var okBox = document.getElementById('formSuccess');
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var btnHTML = submitBtn ? submitBtn.innerHTML : '';
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      errBox.classList.remove('show');
+      okBox.classList.remove('show');
+      var name = document.getElementById('fName').value.trim();
+      var email = document.getElementById('fEmail').value.trim();
+      var website = document.getElementById('fUrl').value.trim();
+      var industry = document.getElementById('fIndustry').value;
+      var service = document.getElementById('fService').value;
+      var msg = document.getElementById('fMsg').value.trim();
+      var problems = [];
+      if (name.length < 2) problems.push('your name');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) problems.push('a valid email');
+      if (!service) problems.push('a service');
+      if (msg.length < 10) problems.push('a few more project details (10+ characters)');
+      if (problems.length) {
         errBox.textContent = 'Please add ' + problems.join(', ') + '.';
         errBox.classList.add('show');
+        return;
       }
-      return;
-    }
-
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i><span>Sending...</span>';
-    }
-
-    var formData = new FormData(form);
-
-    fetch('https://formspree.io/f/xrpebern', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Accept': 'application/json'
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i><span>Sending...</span>';
       }
-    })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        if (data.ok) {
-          form.reset();
-          if (okBox) {
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: 'New site audit request from ' + name,
+          name: name,
+          email: email,
+          website: website,
+          industry: industry || 'Not specified',
+          service: service,
+          message: msg
+        })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.success) {
+            form.reset();
             okBox.classList.add('show');
             okBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            throw new Error(data.message || 'send failed');
           }
-        } else {
-          throw new Error('send failed');
-        }
-      })
-      .catch(function () {
-        if (errBox) {
+        })
+        .catch(function () {
           errBox.textContent = 'Something went wrong while sending. Please try again or reach us on WhatsApp.';
           errBox.classList.add('show');
-        }
-      })
-      .finally(function () {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = btnHTML;
-        }
-      });
-  });
-}
-
+        })
+        .then(function () {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = btnHTML;
+          }
+        });
+    });
+  }
   /* ---------- footer year ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
