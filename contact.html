@@ -1005,6 +1005,12 @@ section[id], footer[id] { scroll-margin-top: 5rem; }
    (section patterns adapted from reference layout; brand system untouched)
 ========================= */
 /* hero: split layout with multi-step form card */
+   @media (max-width: 768px) {
+    .mobile-fix-btn {
+      font-size: 13px !important;
+      padding: 10px 12px !important;
+    }
+  }
 .ch-grid { display: grid; gap: 3rem; align-items: center; position: relative; z-index: 1; }
 @media (min-width: 1024px) { .ch-grid { grid-template-columns: 1fr 1fr; gap: 4rem; } }
 .hero-checks { margin: 1.75rem 0 0; padding: 0; display: grid; gap: .8rem; }
@@ -1344,14 +1350,14 @@ a.dc-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-soft); b
                   <p id="msError" class="form-error"></p>
                   <div class="ms-nav">
                     <button type="button" class="btn btn-ghost" data-ms="back"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                    <button type="submit" class="btn btn-coral">Send My Request <i class="fa-solid fa-paper-plane"></i></button>
+                    <button type="submit" class="btn btn-coral" class="mobile-fix-btn" >Send My Request <i class="fa-solid fa-paper-plane"></i></button>
                   </div>
                 </div>
               </form>
               <div id="msSuccess" class="ms-success">
                 <span class="ms-ok"><i class="fa-solid fa-circle-check"></i></span>
-                <h3>Thank you! Your message has been sent successfully.</h3>
-                <p>This is a front-end demo: to receive real enquiries, connect this form to your email service or backend first.</p>
+                <h3>Thank you for connecting with Faizan Web Solutions! We’re excited to review your project and will reach out soon.</h3>
+               
               </div>
               <p class="ms-note">100% Confidential. No Spam. No Obligation.</p>
             </div>
@@ -1915,9 +1921,13 @@ a.dc-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-soft); b
       errBox.classList.remove('show');
 
       // Yeh yahan naya add kiya hai taake data Web3Forms par jaye
-      var formData = new FormData(form);
-      formData.append("access_key", "805d70ec-9c3b-43eb-9e6c-142c72afe6f8");
-      formData.append("subject", "New Contact Page Lead From");
+     var formData = new FormData(form);
+      
+      // Yahan hum form ke input se name nikal kar variable mein store kar rahe hain
+      var name = form.querySelector('[name="name"]') ? form.querySelector('[name="name"]').value : 'Client';
+      
+      formData.append("access_key", "805d70ec-9c3b-43eb-9e6c-142c72afe6f8");[span_0](start_span)[span_0](end_span)
+      formData.append("subject", "New Contact Page Lead From " + name);
 
       fetch("https://api.web3forms.com/submit", {
         method: "POST",
