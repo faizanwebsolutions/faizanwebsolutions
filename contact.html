@@ -1005,13 +1005,6 @@ section[id], footer[id] { scroll-margin-top: 5rem; }
    (section patterns adapted from reference layout; brand system untouched)
 ========================= */
 /* hero: split layout with multi-step form card */
-   @media (max-width: 576px) {
-    .mobile-fix-btn {
-      font-size: 12px !important;
-      padding: 12px 6px !important;
-    white-space: nowrap !important;
-    }
-  }
 .ch-grid { display: grid; gap: 3rem; align-items: center; position: relative; z-index: 1; }
 @media (min-width: 1024px) { .ch-grid { grid-template-columns: 1fr 1fr; gap: 4rem; } }
 .hero-checks { margin: 1.75rem 0 0; padding: 0; display: grid; gap: .8rem; }
@@ -1102,6 +1095,14 @@ a.dc-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-soft); b
 /* final cta buttons */
 .cta-btns { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 2rem; }
 </style>
+  <style> 
+    @media (max-width: 576px) {
+    .mobile-fix-btn {
+      font-size: 12px !important;
+      padding: 12px 6px !important;
+    white-space: nowrap !important;
+    }
+  }</style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
