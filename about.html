@@ -2261,33 +2261,7 @@ section[id], footer[id] { scroll-margin-top: 5rem; }
     revealEls.forEach(function (el) { el.classList.add('visible'); });
   }
 
-  /* ---------- audit form: validation + popup response ---------- */
-  var form = document.getElementById('auditForm');
-  var errBox = document.getElementById('formError');
-  var popup = document.getElementById('popup');
-  var popupMsg = document.getElementById('popupMsg');
-  var popupClose = document.getElementById('popupClose');
-
-  function showPopup(name) {
-    if (popupMsg && name) {
-      popupMsg.textContent = 'Thanks, ' + name + '! We\'ll review your site and get back to you with your free technical audit shortly.';
-    }
-    popup.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
-  function hidePopup() {
-    if (!popup) return;
-    popup.classList.remove('show');
-    document.body.style.overflow = '';
-  }
-  if (popupClose) popupClose.addEventListener('click', hidePopup);
-  if (popup) {
-    popup.addEventListener('click', function (e) {
-      if (e.target === popup) hidePopup();
-    });
-  }
-
-  if (form) {
+ if (form) {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       errBox.classList.remove('show');
@@ -2307,11 +2281,34 @@ section[id], footer[id] { scroll-margin-top: 5rem; }
         errBox.classList.add('show');
         return;
       }
-      showPopup(name.split(' ')[0]);
-      form.reset();
+
+      // ---------- Web3Forms Submission ----------
+      var formData = new FormData(form);
+      formData.append("access_key", "805d70ec-9c3b-43eb-9e6c-142c72afe6f8");
+      formData.append("subject", "New About Page Lead From " + name);
+
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        if (data.success) {
+          showPopup(name.split(' ')[0]);
+          form.reset();
+        } else {
+          errBox.textContent = "Something went wrong. Please try again.";
+          errBox.classList.add('show');
+        }
+      })
+      .catch(function(error) {
+        errBox.textContent = "Network error. Please check your connection.";
+        errBox.classList.add('show');
+      });
     });
   }
-
   /* ---------- footer year ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
