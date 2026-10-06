@@ -2261,79 +2261,81 @@ section[id], footer[id] { scroll-margin-top: 5rem; }
     revealEls.forEach(function (el) { el.classList.add('visible'); });
   }
 
- /* ---------- audit form (Web3Forms AJAX) ---------- */
-  // TODO: paste your Web3Forms access key below (free at https://web3forms.com) before launch.
-  var WEB3FORMS_KEY = '805d70ec-9c3b-43eb-9e6c-142c72afe6f8';
+ /* ---------- audit form: validation + popup response ---------- */
   var form = document.getElementById('auditForm');
+  var errBox = document.getElementById('formError');
+  var popup = document.getElementById('popup');
+  var popupMsg = document.getElementById('popupMsg');
+  var popupClose = document.getElementById('popupClose');
+
+  function showPopup(name) {
+    if (popupMsg && name) {
+      popupMsg.textContent = 'Thanks, ' + name + '! We\'ll review your site and get back to you with your free technical audit shortly.';
+    }
+    popup.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function hidePopup() {
+    if (!popup) return;
+    popup.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  if (popupClose) popupClose.addEventListener('click', hidePopup);
+  if (popup) {
+    popup.addEventListener('click', function (e) {
+      if (e.target === popup) hidePopup();
+    });
+  }
+
   if (form) {
-    var errBox = document.getElementById('formError');
-    var okBox = document.getElementById('formSuccess');
-    var submitBtn = form.querySelector('button[type="submit"]');
-    var btnHTML = submitBtn ? submitBtn.innerHTML : '';
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       errBox.classList.remove('show');
-      okBox.classList.remove('show');
       var name = document.getElementById('fName').value.trim();
       var email = document.getElementById('fEmail').value.trim();
-      var website = document.getElementById('fUrl').value.trim();
-      var industry = document.getElementById('fIndustry').value;
       var service = document.getElementById('fService').value;
+      var url = document.getElementById('fUrl').value.trim();
       var msg = document.getElementById('fMsg').value.trim();
       var problems = [];
       if (name.length < 2) problems.push('your name');
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) problems.push('a valid email');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) problems.push('a valid business email');
       if (!service) problems.push('a service');
+      if (url && !/^https?:\/\/.+\..+/.test(url)) problems.push('a valid website URL (include https://)');
       if (msg.length < 10) problems.push('a few more project details (10+ characters)');
       if (problems.length) {
         errBox.textContent = 'Please add ' + problems.join(', ') + '.';
         errBox.classList.add('show');
         return;
       }
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i><span>Sending...</span>';
-      }
-      fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          subject: 'New Home Page Lead from ' + name,
-          name: name,
-          email: email,
-          website: website,
-          industry: industry || 'Not specified',
-          service: service,
-          message: msg
-        })
+
+      // ---------- Web3Forms Submission ----------
+      var formData = new FormData(form);
+      formData.append("access_key", "805d70ec-9c3b-43eb-9e6c-142c72afe6f8");
+      formData.append("subject", "New About Page Lead From " + name);
+
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
       })
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-          if (data.success) {
-            form.reset();
-            okBox.classList.add('show');
-            okBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          } else {
-            throw new Error(data.message || 'send failed');
-          }
-        })
-        .catch(function () {
-          errBox.textContent = 'Something went wrong while sending. Please try again or reach us on WhatsApp.';
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        if (data.success) {
+          showPopup(name.split(' ')[0]);
+          form.reset();
+        } else {
+          errBox.textContent = "Something went wrong. Please try again.";
           errBox.classList.add('show');
-        })
-        .then(function () {
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = btnHTML;
-          }
-        });
+        }
+      })
+      .catch(function(error) {
+        errBox.textContent = "Network error. Please check your connection.";
+        errBox.classList.add('show');
+      });
     });
   }
-  /* ---------- footer year ---------- */
-  var yearEl = document.getElementById('year');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
-})();
+ 
 
   /* ---------- footer year ---------- */
   var yearEl = document.getElementById('year');
