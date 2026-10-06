@@ -2155,7 +2155,7 @@ section[id], footer[id] { scroll-margin-top: 5rem; }
           </div>
           <div class="reveal">
             <div class="contact-form-card">
-              <form id="auditForm" action="https://formspree.io/f/xrpebern" novalidate>
+              <form id="auditForm" action="https://formspree.io/f/xrpebern" mrthod="POST" novalidate>
                 <div class="form-row-2">
                   <div class="field"><label for="fName">Your name *</label><input id="fName" name="name" type="text" required autocomplete="name" placeholder="Jane Smith"></div>
                   <div class="field"><label for="fEmail">Email *</label><input id="fEmail" name="email" type="email" required autocomplete="email" placeholder="jane@company.com"></div>
@@ -2469,7 +2469,7 @@ section[id], footer[id] { scroll-margin-top: 5rem; }
 
   /* ---------- audit form (Web3Forms AJAX) ---------- */
   // TODO: paste your Web3Forms access key below (free at https://web3forms.com) before launch.
-  var WEB3FORMS_KEY = 'YOUR_WEB3FORMS_ACCESS_KEY';
+  /* ----------var WEB3FORMS_KEY = 'YOUR_WEB3FORMS_ACCESS_KEY';
   var form = document.getElementById('auditForm');
   if (form) {
     var errBox = document.getElementById('formError');
@@ -2535,7 +2535,7 @@ section[id], footer[id] { scroll-margin-top: 5rem; }
           }
         });
     });
-  }
+  }---------- */
 
   /* ---------- footer year ---------- */
   var yearEl = document.getElementById('year');
