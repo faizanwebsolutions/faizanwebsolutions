@@ -1864,7 +1864,7 @@ a.dc-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-soft); b
 
 </script>
   <script>
-  /* contact page: multi-step audit form */
+ /* contact page: multi-step audit form */
   (function () {
     var form = document.getElementById('msForm');
     if (!form) return;
@@ -1913,15 +1913,39 @@ a.dc-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-soft); b
         return;
       }
       errBox.classList.remove('show');
-      form.style.display = 'none';
-      document.querySelector('#msCard .ms-steps').style.display = 'none';
-      steps.forEach(function (st) {
-        st.classList.remove('active');
-        st.classList.add('done');
-        st.querySelector('.ms-dot').innerHTML = '<i class="fa-solid fa-check"></i>';
+
+      // Yeh yahan naya add kiya hai taake data Web3Forms par jaye
+      var formData = new FormData(form);
+      formData.append("access_key", "805d70ec-9c3b-43eb-9e6c-142c72afe6f8");
+      formData.append("subject", "New Contact Page Lead From");
+
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        if (data.success) {
+          form.style.display = 'none';
+          document.querySelector('#msCard .ms-steps').style.display = 'none';
+          steps.forEach(function (st) {
+            st.classList.remove('active');
+            st.classList.add('done');
+            st.querySelector('.ms-dot').innerHTML = '<i class="fa-solid fa-check"></i>';
+          });
+          document.getElementById('msSuccess').classList.add('show');
+          document.getElementById('msCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          errBox.textContent = data.message || 'Something went wrong, please try again.';
+          errBox.classList.add('show');
+        }
+      })
+      .catch(function(error) {
+        errBox.textContent = 'Network error. Please check your connection.';
+        errBox.classList.add('show');
       });
-      document.getElementById('msSuccess').classList.add('show');
-      document.getElementById('msCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
     show(0);
   })();
